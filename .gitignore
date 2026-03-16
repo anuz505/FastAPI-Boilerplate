@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environment
+env/
+myvenv/
+
+# Environment variables
+.env
+
+# IDE-specific files
+# VS Code
+.vscode/
+
