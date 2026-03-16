@@ -5,6 +5,7 @@ from app.core import settings
 from app.schemas import HealthCheckResponse
 from contextlib import asynccontextmanager
 from app.core import logger
+from app.api import router as todo_routes
 
 
 @asynccontextmanager
@@ -49,6 +50,8 @@ async def root():
         status="healthy",
         version=settings.app_version
     )
+app.include_router(todo_routes)
+
 
 if __name__ == "__main__":
     import uvicorn

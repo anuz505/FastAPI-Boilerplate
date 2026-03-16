@@ -1,0 +1,47 @@
+from typing import List
+from fastapi import Depends, status
+from fastapi.routing import APIRouter
+from sqlalchemy.orm import Session
+from app.db import get_db
+from app.schemas.todo_schema import TodoCreate, TodoResponse, TodoUpdate
+from app.services import TodoService
+from uuid import UUID
+from app.core import LoggerSetup
+
+logger = LoggerSetup.setup_logger(__name__)
+router = APIRouter(prefix="/todo", tags=["todos"])
+
+
+def get_service(db: Session = Depends(get_db)) -> TodoService:
+    logger.info("starting service")
+    return TodoService(db)
+
+
+@router.get("/", response_model=List[TodoResponse])
+async def get_all_todos(service: TodoService = Depends(get_service)):
+    logger.info("gettings all todos")
+    return await service.get_all()
+
+
+@router.get("/{todo_id}")
+async def get_todo_detail(id: str, service: TodoService = Depends(get_service)):
+    logger.info(f"getting todo {id}")
+    return await service.get_or_404(id)
+
+
+@router.post("/", response_model=TodoResponse, status_code=status.HTTP_201_CREATED)
+async def create_todo(data: TodoCreate, service: TodoService = Depends(get_service)):
+    logger.info("creating todo")
+    return await service.create(data)
+
+
+@router.put("/", response_model=TodoResponse, status_code=status.HTTP_200_OK)
+async def update_todo(data: TodoUpdate, id: UUID, service: TodoService = Depends(get_service)):
+    logger.info("updating todo")
+    return await service.update(data, id)
+
+
+@router.delete("/")
+async def delete_todo(id: UUID, service: TodoService = Depends(get_service)):
+    logger.info("deleting todo")
+    return await service.delete(id)
