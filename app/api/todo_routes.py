@@ -23,8 +23,8 @@ async def get_all_todos(service: TodoService = Depends(get_service)):
     return await service.get_all()
 
 
-@router.get("/{todo_id}")
-async def get_todo_detail(id: str, service: TodoService = Depends(get_service)):
+@router.get("/{id}")
+async def get_todo_detail(id: UUID, service: TodoService = Depends(get_service)):
     logger.info(f"getting todo {id}")
     return await service.get_or_404(id)
 
@@ -35,13 +35,13 @@ async def create_todo(data: TodoCreate, service: TodoService = Depends(get_servi
     return await service.create(data)
 
 
-@router.put("/", response_model=TodoResponse, status_code=status.HTTP_200_OK)
-async def update_todo(data: TodoUpdate, id: UUID, service: TodoService = Depends(get_service)):
+@router.put("/{id}", response_model=TodoResponse, status_code=status.HTTP_200_OK)
+async def update_todo(id: UUID, data: TodoUpdate, service: TodoService = Depends(get_service)):
     logger.info("updating todo")
     return await service.update(data, id)
 
 
-@router.delete("/")
+@router.delete("/{id}")
 async def delete_todo(id: UUID, service: TodoService = Depends(get_service)):
     logger.info("deleting todo")
     return await service.delete(id)
