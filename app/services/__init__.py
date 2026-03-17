@@ -1,2 +1,3 @@
 from .todo_service import TodoService
-__all__ = ["TodoService"]
+from .auth_service import AuthService
+__all__ = ["TodoService", "AuthService"]

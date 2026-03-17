@@ -9,7 +9,7 @@ from uuid import UUID
 from app.core import LoggerSetup
 
 logger = LoggerSetup.setup_logger(__name__)
-router = APIRouter(prefix="/todo", tags=["todos"])
+todo_router = APIRouter(prefix="/todo", tags=["todos"])
 
 
 def get_service(db: Session = Depends(get_db)) -> TodoService:
@@ -17,31 +17,31 @@ def get_service(db: Session = Depends(get_db)) -> TodoService:
     return TodoService(db)
 
 
-@router.get("/", response_model=List[TodoResponse])
+@todo_router.get("/", response_model=List[TodoResponse])
 async def get_all_todos(service: TodoService = Depends(get_service)):
     logger.info("gettings all todos")
     return await service.get_all()
 
 
-@router.get("/{id}")
+@todo_router.get("/{id}")
 async def get_todo_detail(id: UUID, service: TodoService = Depends(get_service)):
     logger.info(f"getting todo {id}")
     return await service.get_or_404(id)
 
 
-@router.post("/", response_model=TodoResponse, status_code=status.HTTP_201_CREATED)
+@todo_router.post("/", response_model=TodoResponse, status_code=status.HTTP_201_CREATED)
 async def create_todo(data: TodoCreate, service: TodoService = Depends(get_service)):
     logger.info("creating todo")
     return await service.create(data)
 
 
-@router.put("/{id}", response_model=TodoResponse, status_code=status.HTTP_200_OK)
+@todo_router.put("/{id}", response_model=TodoResponse, status_code=status.HTTP_200_OK)
 async def update_todo(id: UUID, data: TodoUpdate, service: TodoService = Depends(get_service)):
     logger.info("updating todo")
     return await service.update(data, id)
 
 
-@router.delete("/{id}")
+@todo_router.delete("/{id}")
 async def delete_todo(id: UUID, service: TodoService = Depends(get_service)):
     logger.info("deleting todo")
     return await service.delete(id)
