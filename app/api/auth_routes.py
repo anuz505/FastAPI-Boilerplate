@@ -11,12 +11,12 @@ from app.repositories import AuthRepository
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from app.core import settings
 from datetime import timedelta
-from app.utils.auth_utils import authenticate_user, create_token, verify_refresh_token
+from app.utils.auth_utils import authenticate_user, create_token, decode_token
 from fastapi.exceptions import HTTPException
 
 logger = LoggerSetup.setup_logger(__name__)
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
 def get_service(db: AsyncSession = Depends(get_db)) -> AuthService:
@@ -83,7 +83,7 @@ async def refresh(response: Response, request: Request):
     if not current_refresh_token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
-    payload = await verify_refresh_token(current_refresh_token)
+    payload = await decode_token(current_refresh_token, expected_type="refresh")
     username = payload.get("sub")
     if not username:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)

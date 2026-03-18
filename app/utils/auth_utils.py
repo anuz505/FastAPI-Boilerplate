@@ -44,7 +44,7 @@ async def authenticate_user(username: str, password: str, repo: AuthRepositoryLi
     return user
 
 
-async def verify_refresh_token(refresh_token: str) -> dict:
+async def decode_token(refresh_token: str, expected_type) -> dict:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate the refresh token",
@@ -52,7 +52,7 @@ async def verify_refresh_token(refresh_token: str) -> dict:
     )
     try:
         payload = jwt.decode(refresh_token, settings.secret_key, algorithms=[settings.ALGORITHM])
-        if payload.get("type") != "refresh":
+        if payload.get("type") != expected_type:
             raise credentials_exception
         sub: str = payload.get("sub")
         if sub is None:
@@ -60,5 +60,3 @@ async def verify_refresh_token(refresh_token: str) -> dict:
         return payload
     except JWTError:
         raise credentials_exception
-
-

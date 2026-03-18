@@ -1,11 +1,16 @@
 from datetime import datetime
+from typing import List, TYPE_CHECKING
 from uuid import UUID as PythonUUID, uuid4
 from sqlalchemy.dialects.postgresql import UUID as SQLAlchemyUUID
 from sqlalchemy import DateTime, String, CheckConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from enum import Enum
 from app.models.db_models import Base
 from sqlalchemy import Enum as SQLAlchemyEnum
+
+
+if TYPE_CHECKING:
+    from app.models.todo_model import Todo
 
 
 class RoleEnum(str, Enum):
@@ -26,5 +31,5 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, nullable=False, onupdate=datetime.now)
     role: Mapped[RoleEnum] = mapped_column(SQLAlchemyEnum(RoleEnum, name="role_enum"), default=RoleEnum.user, nullable=False)
-
+    todos: Mapped[List["Todo"]] = relationship(back_populates="owner", cascade="all, delete")
     __table_args__ = (CheckConstraint("length(password) >= 8", name="password_at_least_8_chars"),)
