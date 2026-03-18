@@ -11,6 +11,9 @@ email-validator
 python-dotenv
 typing-extensions
 flake8
+python-jose[cryptography]
+passlib[argon2]
+
 
 # test
 pytest
