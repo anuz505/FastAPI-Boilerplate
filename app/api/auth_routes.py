@@ -110,3 +110,10 @@ async def refresh(response: Response, request: Request):
         path="/"
     )
     return TokenResponse(access_token=new_access_token, refresh_token=new_refresh_token)
+
+
+@auth_router.post("/logout")
+async def logout(response: Response):
+    response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
+    return {"message": "logged out"}
