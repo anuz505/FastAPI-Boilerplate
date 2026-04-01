@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, List
 import uuid
 
 
@@ -17,6 +17,11 @@ class TodoResponse(BaseModel):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class UserTodoResponses(BaseModel):
+    user_id: uuid.UUID
+    todos: List[TodoResponse]
 
 
 class TodoUpdate(BaseModel):

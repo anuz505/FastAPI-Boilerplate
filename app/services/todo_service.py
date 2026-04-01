@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from app.repositories import TodoRepository
@@ -12,14 +13,17 @@ class TodoService:
     async def get_all(self) -> List[TodoResponse]:
         return await self.repo.get_all()
 
-    async def get_or_404(self, id: str) -> TodoResponse:
+    async def get_users_all(self, user_id: UUID) -> List[TodoResponse]:
+        return await self.repo.get_users_all(user_id=user_id)
+
+    async def get_or_404(self, id: UUID) -> TodoResponse:
         todo = await self.repo.get_by_id(id)
         if not todo:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Todo not found {id}")
         return todo
 
-    async def create(self, todo: TodoCreate) -> TodoResponse:
-        return await self.repo.create(todo)
+    async def create(self, todo: TodoCreate, owner_id: UUID) -> TodoResponse:
+        return await self.repo.create(todo, owner_id=owner_id)
 
     async def update(self, updated_todo: TodoUpdate, id: str) -> TodoResponse:
         todo = await self.get_or_404(id)

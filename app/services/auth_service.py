@@ -24,3 +24,9 @@ class AuthService:
             return await self.repo.update_user(data, id)
         except ValueError as e:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e)) from e
+
+    async def get_user_by_username(self, username: str) -> UserResponse:
+        try:
+            return await self.repo.get_user_by_username(username)
+        except ValueError as e:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e)) from e
