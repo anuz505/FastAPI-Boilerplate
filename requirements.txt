@@ -1,6 +1,6 @@
 fastapi[standard]
 uvicorn
-sqlalchemy
+sqlalchemy[asyncio]
 asyncpg
 psycopg2-binary
 alembic
@@ -11,3 +11,10 @@ email-validator
 python-dotenv
 typing-extensions
 flake8
+
+# test
+pytest
+httpx
+faker
+factory-boy
+pytest-asyncio
